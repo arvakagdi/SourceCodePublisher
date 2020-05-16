@@ -1,0 +1,222 @@
+<!Document html>
+<html>
+<head>
+<link rel = "stylesheet" href = "style.css">
+<script src="showHideClass.js"></script>
+</head>
+<body>
+<button onclick = "showHideClass('classes')">Show or Hide Class Contents</button>
+<button onclick = "showHideClass('functions')">Show or Hide Function Contents</button>
+<button onclick = "showHideClass('comments')">Show or Hide Comments</button><br><a href="dependencies.h.html ">dependencies.h</a>&nbsp&nbsp&nbsp&nbsp<pre>
+<div class="comments">//////////////////////////////////////////////////////////////////////////////////////////////</div>
+<div class="comments">// dependency.cpp - checks the dependency of each file                                      //</div>
+<div class="comments">// ver 1.1																			        //				</div>
+<div class="comments">// Platform:       Dell Intel Core i3, Win10                                                //</div>
+<div class="comments">// Application:    Object Oriented Design - Project #1, Spring 2019                         //</div>
+<div class="comments">// Author:         Arva Kagdi                                                               //</div>
+<div class="comments">//////////////////////////////////////////////////////////////////////////////////////////////</div>
+
+#include "dependencies.h"
+
+using namespace CodeAnalysis;
+using namespace Utilities1;
+
+dependencies::dependencies()
+<div class="functions">{
+}</div>
+
+
+dependencies::~dependencies()
+<div class="functions">{
+}</div>
+
+std::map&lt;std::string, std::vector&lt;std::string&gt;&gt; dependencies::summonParser(std::vector&lt;std::string&gt; files)
+<div class="functions">{
+	std::string fileSpec;
+	std::map&lt;std::string, std::vector&lt;std::string&gt;&gt; dependencyMap;
+
+	<div class="comments">//-----&lt; Parses through the files &gt;------//</div>
+	for (size_t i = 0; i &lt; files.size(); ++i)  
+	{
+		fileSpec = FileSystem::Path::getFullFileSpec(files[i]);
+		std::string msg = "Processing file" + fileSpec;
+		Util::title(msg);
+
+		ConfigParseForCodeAnal configure;
+		Parser* pParser = configure.Build();
+
+		std::string name;
+
+		try
+		{
+			if (pParser)
+			{
+				name = FileSystem::Path::getName(files[i]);
+				if (!configure.Attach(fileSpec))
+				{
+					std::cout &lt;&lt; "\n  could not open file " &lt;&lt; name &lt;&lt; std::endl;
+					continue;
+				}
+			}
+			else
+			{
+				std::cout &lt;&lt; "\n\n  Parser not built\n\n";
+				return std::map&lt;std::string, std::vector&lt;std::string&gt;&gt;();
+			}
+
+			<div class="comments">//-----&lt; Saves current package name to  repository &gt;------//</div>
+			Repository* pRepo = Repository::getInstance();
+			pRepo-&gt;package() = name;
+
+	
+			<div class="comments">//-----&lt; Parses through the package untill empty &gt;------//</div>
+			while (pParser-&gt;next())
+			{
+				pParser-&gt;parse();
+			}
+			std::cout &lt;&lt; "\n";
+
+			<div class="comments">//-----&lt; AST operation is performed here. It computes the complelxity for  every node and records in AST &gt;------//</div>
+			ASTNode* pGlobalScope = pRepo-&gt;getGlobalScope();
+
+			DepTable(pGlobalScope, fileSpec,dependencyMap);
+			newInfoTable(pGlobalScope, fileSpec);
+
+			analyzeDepT(dependencyMap);
+
+			complexityEval(pGlobalScope);
+		
+		<div class="comments">//-----&lt; DIsplays element &gt;------//</div>
+		}
+		catch (std::exception& ex)
+		{
+			std::cout &lt;&lt; "\n\n    " &lt;&lt; ex.what() &lt;&lt; "\n\n";
+			std::cout &lt;&lt; "\n  exception caught at line " &lt;&lt; __LINE__ &lt;&lt; " ";
+			std::cout &lt;&lt; "\n  in package \"" &lt;&lt; name &lt;&lt; "\"";
+		}
+		std::cout &lt;&lt; "\n";
+	}
+	std::cout &lt;&lt; "\n";
+
+	return dependencyMap;
+}</div>
+
+<div class="comments">//-----&lt; Analayzing dependency table &gt;------//</div>
+void dependencies::analyzeDepT(std::map&lt;std::string, std::vector&lt;std::string&gt;&gt;& depTmap)
+<div class="functions">{
+	if (depTmap.size() == 0)
+		return;
+	auto iter = depTmap.begin();
+	while (iter != depTmap.end()) {
+		if (iter-&gt;second.size() != 0) {
+			for (size_t i = 0; i &lt; iter-&gt;second.size(); i++) {
+				auto found = iter-&gt;second[i].find_last_of("/");
+				auto fquote = iter-&gt;second[i].find_last_of("\"");
+				if (found == iter-&gt;second[i].npos) {
+					auto quote1 = iter-&gt;second[i].find_first_of("\"");
+					iter-&gt;second[i] = iter-&gt;second[i].substr(quote1 + 1, fquote - quote1 - 1);
+				}
+				iter-&gt;second[i] = iter-&gt;second[i].substr(found + 1, fquote - found - 1);
+			}
+		}
+		iter++;
+	}
+}</div>
+
+<div class="comments">//-----&lt; We create the dependency table here &gt;------//</div>
+void dependencies::DepTable(CodeAnalysis::ASTNode * pGlobalScope, std::string fileSpec, std::map&lt;std::string, std::vector&lt;std::string&gt;&gt;& dependencyMap)
+<div class="functions">{
+	auto iter = pGlobalScope-&gt;statements_.begin();
+	std::vector&lt;std::string&gt; dep;
+	while (iter != pGlobalScope-&gt;statements_.end()) {
+		dep.push_back((*iter)-&gt;ToString());
+		auto iter2 = dependencyMap.find(fileSpec);
+		if (iter2 == dependencyMap.end()) {
+			dependencyMap.insert(std::pair&lt;std::string, std::vector&lt;std::string&gt;&gt;(fileSpec, dep));
+		}
+		else {
+			iter2-&gt;second.push_back((*iter)-&gt;ToString());
+		}
+		iter++;
+	}
+}</div>
+
+<div class="comments">//-----&lt; An info table is crreated &gt;------//</div>
+void dependencies::newInfoTable(CodeAnalysis::ASTNode * pGlobalScope, std::string file)
+<div class="functions">{
+
+	static size_t indentLevel = 0;
+	TypeInfo type = findTypeInfo(pGlobalScope);
+	std::map&lt;size_t, TypeInfo&gt; temp;
+	auto name = file;
+	if (pGlobalScope-&gt;package_ != "" && pGlobalScope-&gt;type_ != "control" && pGlobalScope-&gt;type_ != "anonymous") {
+		temp.insert(std::pair&lt;size_t, TypeInfo&gt;(pGlobalScope-&gt;startLineCount_, type));
+		if (pGlobalScope-&gt;type_ == "class" || pGlobalScope-&gt;type_ == "struct") {
+			temp.insert(std::pair&lt;size_t, TypeInfo&gt;(pGlobalScope-&gt;endLineCount_ - 1, end));
+		}
+		else {
+			temp.insert(std::pair&lt;size_t, TypeInfo&gt;(pGlobalScope-&gt;endLineCount_, end));
+		}
+		auto find = typeInfoTable_.find(file);
+		if (find == typeInfoTable_.end()) {
+			typeInfoTable_.insert(std::pair&lt;std::string, std::map&lt;size_t, TypeInfo&gt;&gt;(name, temp));
+		}
+		else {
+			find-&gt;second.insert(std::pair&lt;size_t, TypeInfo&gt;(pGlobalScope-&gt;startLineCount_, type));
+			if (pGlobalScope-&gt;type_ == "class" || pGlobalScope-&gt;type_ == "struct")
+				find-&gt;second.insert(std::pair&lt;size_t, TypeInfo&gt;(pGlobalScope-&gt;endLineCount_ - 1, end));
+			else
+				find-&gt;second.insert(std::pair&lt;size_t, TypeInfo&gt;(pGlobalScope-&gt;endLineCount_, end));
+		}
+	}
+	auto iter = pGlobalScope-&gt;children_.begin();
+	while (iter != pGlobalScope-&gt;children_.end()) {
+		newInfoTable(*iter, file);
+		++iter;
+	}
+	--indentLevel;
+}</div>
+
+<div class="comments">//-----&lt; Check the type of node &gt;------//</div>
+dependencies::TypeInfo dependencies::findTypeInfo(CodeAnalysis::ASTNode * pGlobalScope)
+<div class="functions">{
+	if (pGlobalScope-&gt;type_ == "namespace")
+		return none;
+	if (pGlobalScope-&gt;type_ == "class")
+		return classes;
+	if (pGlobalScope-&gt;type_ == "function" && pGlobalScope-&gt;endLineCount_ - pGlobalScope-&gt;startLineCount_ == 0)
+		return singleLineFn;
+	if (pGlobalScope-&gt;type_ == "function")
+		return function;
+	if (pGlobalScope-&gt;type_ == "interface")
+		return function;
+	if (pGlobalScope-&gt;type_ == "struct")
+		return classes;
+	return none;
+}</div>
+
+<div class="comments">//-----&lt;Test Stub for dependencies &gt;------//</div>
+#ifdef TEST_DEPENDENCY
+
+int main()
+<div class="functions">{
+	std::vector&lt;std::string&gt; files;
+	files.pushback("../CppParser/FileSystem/FileSystem.h");
+	files.pushback("../CppParser/Parser/ConfigureParser.h");
+	files.pushback("../CppParser/Parser/Toker.h");
+	files.pushback("../CppParser/Parser/Semi.h");
+	files.pushback("../CppParser/Parser/Utilities.h");
+	files.pushback("../CppParser/Parser/Logger.h");
+	files.pushback("../CppParser/Parser/ScopeStack.h");
+	Dependency ob;
+	ob.summonparser(files);
+
+	return 0;
+}</div>
+
+#endif
+
+</pre>
+</body
+></html
+>

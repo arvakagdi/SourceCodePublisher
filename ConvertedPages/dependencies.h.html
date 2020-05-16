@@ -1,0 +1,79 @@
+<!Document html>
+<html>
+<head>
+<link rel = "stylesheet" href = "style.css">
+<script src="showHideClass.js"></script>
+</head>
+<body>
+<button onclick = "showHideClass('classes')">Show or Hide Class Contents</button>
+<button onclick = "showHideClass('functions')">Show or Hide Function Contents</button>
+<button onclick = "showHideClass('comments')">Show or Hide Comments</button><br><a href="ConfigureParser.h.html ">ConfigureParser.h</a>&nbsp&nbsp&nbsp&nbsp<a href="Parser.h.html ">Parser.h</a>&nbsp&nbsp&nbsp&nbsp<a href="ActionsAndRules.h.html ">ActionsAndRules.h</a>&nbsp&nbsp&nbsp&nbsp<a href="AbstrSynTree.h.html ">AbstrSynTree.h</a>&nbsp&nbsp&nbsp&nbsp<a href="ScopeStack.h.html ">ScopeStack.h</a>&nbsp&nbsp&nbsp&nbsp<a href="Utilities.h.html ">Utilities.h</a>&nbsp&nbsp&nbsp&nbsp<pre>
+<div class="comments">//////////////////////////////////////////////////////////////////////////////////////////////</div>
+<div class="comments">// dependencies.h - Support file and directory operations						            //</div>
+<div class="comments">// ver 1.1																			        //				</div>
+<div class="comments">// Platform:      Dell Intel Core i3, Win10									     		    //</div>
+<div class="comments">// Application:   Object Oriented Design - Project #1, Spring 2019                          //</div>
+<div class="comments">// Author:        Arva Kagdi                                                                //</div>
+<div class="comments">//////////////////////////////////////////////////////////////////////////////////////////////</div>
+
+<div class="comments">/*
+* Module Operations:
+* ==================
+* This module checkes the dependency for each file
+* It creates a dependency table and a info table where it checks for the dependency
+* It also looks for the type  of node wether it is a class or function
+*
+* Required files :
+* ==================
+* ConfigureParser.h, ConfigureParser.cpp
+* Parser.h, Parser.cpp
+* ActionsAndRules.h, ActionsAndRules.cpp
+* AbstrSynTree.h, AbstrSynTree.cpp
+* ScopeStack.h, ScopeStack.cpp
+* Utilities.h, Utilities.cpp
+*
+* Build commands
+* ===================
+* - devenv OODProject2.sln
+*
+* Maintenance History:
+* ===================
+* ver 1.1 : 3/20/2019
+* ver 1.0 : 2/14/2019
+* first release
+*/</div>
+
+
+#pragma once
+#include &lt;vector&gt;
+#include &lt;map&gt;
+#include "../CppParser/Parser/ConfigureParser.h"
+#include "../CppParser/Parser/Parser.h"
+#include "../CppParser/Parser/ActionsAndRules.h"
+#include "../CppParser/AbstractSyntaxTree/AbstrSynTree.h"
+#include "../CppParser/ScopeStack/ScopeStack.h"
+#include "../CppParser/Utilities/Utilities.h"
+#define Util StringHelper
+
+<div class="comments">//&lt;----creating class dependencies----&gt;//</div>
+class dependencies
+<div class="classes">{
+public:
+	dependencies();
+	~dependencies();
+	enum TypeInfo { none, classes, function, end, singleLineFn };
+	std::map&lt;std::string, std::vector&lt;std::string&gt;&gt; summonParser(std::vector&lt;std::string&gt; files);
+	void analyzeDepT(std::map &lt; std::string, std::vector&lt;std::string&gt;&gt; & depT);
+	void DepTable(CodeAnalysis::ASTNode* pGlobalScope, std::string fileSpec, std::map&lt;std::string, std::vector&lt;std::string&gt;&gt;& dependencyMap);
+	void newInfoTable(CodeAnalysis::ASTNode * pGlobalScope, std::string file);
+	TypeInfo findTypeInfo(CodeAnalysis::ASTNode* pGlobalScope);
+	std::map&lt;std::string, std::map&lt;std::size_t, dependencies::TypeInfo&gt;&gt; returnTypeInfoTable() <div class="functions">{ return typeInfoTable_; }</div>
+
+private:
+	std::map&lt;std::string, std::map&lt;std::size_t, dependencies::TypeInfo&gt;&gt; typeInfoTable_;
+};</div>
+
+</pre>
+</body
+></html
+>

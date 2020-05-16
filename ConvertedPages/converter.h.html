@@ -1,0 +1,89 @@
+<!Document html>
+<html>
+<head>
+<link rel = "stylesheet" href = "style.css">
+<script src="showHideClass.js"></script>
+</head>
+<body>
+<button onclick = "showHideClass('classes')">Show or Hide Class Contents</button>
+<button onclick = "showHideClass('functions')">Show or Hide Function Contents</button>
+<button onclick = "showHideClass('comments')">Show or Hide Comments</button><br><a href="FileSystem.h.html ">FileSystem.h</a>&nbsp&nbsp&nbsp&nbsp<a href="display.h.html ">display.h</a>&nbsp&nbsp&nbsp&nbsp<a href="dependencies.h.html ">dependencies.h</a>&nbsp&nbsp&nbsp&nbsp<pre>
+
+ <div class="comments">//////////////////////////////////////////////////////////////////////////////////////////////</div>
+ <div class="comments">// converter.h -  Includes all the functions required for conversion of  files to HTML      //</div>
+ <div class="comments">// ver 1.1																			         //				</div>
+ <div class="comments">// Platform:      Dell Intel Core i3, Win10									             //</div>
+ <div class="comments">// Application:   Object Oriented Design - Project #1, Spring 2019                          //</div>
+ <div class="comments">// Author:        Arva Kagdi                                                                //</div>
+ <div class="comments">//////////////////////////////////////////////////////////////////////////////////////////////</div>
+
+ <div class="comments">/*
+ * Module Operations:
+ * ==================
+ * This package contains a converter class named : converter
+ * Converts files to HTML and change special characters "&lt;" and "&gt;" to their equivalent exscapes
+ * The text of the code is prepended by "&lt;pre&gt;" and postpended by "&lt;/pre&gt;" to  render white spaces
+ * The function code_convert converts the source code into HTML.
+ * These files are then placed in a vector of string
+ * char_change function is used to repace the special characters and remove white spaces
+ *
+ * Fuction new are :
+ * ===================
+ * dependenciesFetch, HandlingComments, DivTagsAdded, SwitchFn.
+ *
+ * Required files :
+ * ===================
+ * FileSystem.h, FileSystem.cpp
+ * display.h, display.cpp
+ * dependency.h, dependency.cpp
+ *
+ * Build commands
+ * ===================
+ * - devenv OODProject2.sln
+ *
+ * Maintenance History:
+ * ====================
+ * ver 1.1 : 3/20/2019
+ * ver 1.0 : 2/14/2019
+ * first release
+ */</div>
+
+
+#pragma once
+#include&lt;vector&gt;
+#include&lt;iostream&gt;
+#include "../DirectoryNavigator/FileSystem/FileSystem.h"
+#include "../display/display.h"
+#include &lt;fstream&gt;
+#include&lt;string&gt;
+#include &lt;algorithm&gt;
+#include &lt;map&gt;
+#include"../dependencies/dependencies.h"
+
+using TypeInfoT = std::map&lt;std::string, std::map&lt;std::size_t, dependencies::TypeInfo&gt;&gt;;
+namespace HTML
+{
+	<div class="comments">//--------&lt; creating a class class convert &gt;--------//</div>
+	class converter
+<div class="classes">	{
+	public:
+
+		converter();
+		~converter();
+
+		std::string code_convert(std::string filesToProcess_, std::map&lt;std::string, std::vector&lt;std::string&gt;&gt; depT, const TypeInfoT &typeTable);
+		void FetchDependencies(std::string &filesToProcess, const std::map&lt;std::string, std::vector&lt;std::string&gt;&gt; &depTable, std::ofstream &webpageOutput);
+		void HideShowComment(std::vector&lt;std::string&gt; &filedata, const TypeInfoT &typeTable);
+		void AddDivTags(std::string &file, std::vector&lt;std::string&gt; &filedata, const TypeInfoT &typeTable);
+		void FunctSwitch(size_t &i, std::vector&lt;std::string&gt; &filedata, std::map&lt;std::size_t, dependencies::TypeInfo&gt;::const_iterator &iter2, size_t lineNo);
+		void HideShowClass(size_t &i, std::vector&lt;std::string&gt; &filedata, size_t &lineNo);
+		void HideShowFunction(size_t &i, std::vector&lt;std::string&gt; &filedata, size_t &lineNo);
+		void SingleLineFOpen(size_t &i, std::vector&lt;std::string&gt; &filedata, size_t &lineNo);
+		void SingleLineFClose(size_t &i, std::vector&lt;std::string&gt; &filedata, size_t &lineNo);
+	};</div>
+}</div>
+
+</pre>
+</body
+></html
+>

@@ -1,0 +1,81 @@
+<!Document html>
+<html>
+<head>
+<link rel = "stylesheet" href = "style.css">
+<script src="showHideClass.js"></script>
+</head>
+<body>
+<button onclick = "showHideClass('classes')">Show or Hide Class Contents</button>
+<button onclick = "showHideClass('functions')">Show or Hide Function Contents</button>
+<button onclick = "showHideClass('comments')">Show or Hide Comments</button><br><a href="display.h.html ">display.h</a>&nbsp&nbsp&nbsp&nbsp<a href="Process.h.html ">Process.h</a>&nbsp&nbsp&nbsp&nbsp<pre>
+<div class="comments">/////////////////////////////////////////////////////////////////////////////////////////</div>
+<div class="comments">// Display.cpp -  Its function is to display the converted files on browser            //</div>
+<div class="comments">// ver 1.1                                                                             //	</div>
+<div class="comments">// Platform:      Dell Intel Core i3, Win10                                            //</div>
+<div class="comments">// Application:   Object Oriented Design - Project #1, Spring 2019                     //</div>
+<div class="comments">// Author:        Arva Kagdi                                                           //</div>
+<div class="comments">/////////////////////////////////////////////////////////////////////////////////////////</div>
+
+
+#include "display.h"
+#include "../Process/Process.h"
+
+display::display()
+<div class="functions">{
+}</div>
+
+display::~display()
+<div class="functions">{
+}</div>
+
+
+<div class="comments">//-----------------------------------------&lt; Display Function &gt;----------------------------------------------------//</div>
+ <div class="comments">//----&lt; takes an argument of vector &lt;string&gt; and display a valid HTML file using process class &gt;----//</div>
+void display::showWebPage(std::vector&lt;std::string&gt; convertedFiles)
+<div class="functions">{
+	std::cout &lt;&lt; "\n Demonstrating code pop-up in the browser";
+	std::cout &lt;&lt; "\n ======================================";
+
+	Process p;    <div class="comments">//----&lt;object created for process&gt;----//</div>
+	p.title("test application");
+	std::string appPath = "C:/Program Files/Mozilla Firefox/firefox.exe";  <div class="comments">//----&lt; path to the browser &gt;----//</div>
+	p.application(appPath);
+
+	
+	for (auto f:convertedFiles)
+	{
+		std::string cmdLine = "/A " + f; 
+		p.commandLine(cmdLine);
+
+		std::cout &lt;&lt; "\n  starting process: \"" &lt;&lt; appPath &lt;&lt; "\"";
+		std::cout &lt;&lt; "\n  with this cmdlne: \"" &lt;&lt; cmdLine &lt;&lt; "\"";
+		p.create();
+		CBP callback = []() { std::cout &lt;&lt; "\n  --- child process exited with this message ---"; };
+		p.setCallBackProcessing(callback);
+		p.registerCallback();
+
+		WaitForSingleObject(p.getProcessHandle(), INFINITE);   <div class="comments">//----&lt;keep waiting till the process is terminated&gt;----//</div>
+	}	
+}</div>
+
+<div class="comments">//-------&lt; Test Stub for display &gt;--------//</div>
+#ifdef TEST_display
+
+int main()
+<div class="functions">{
+	std::cout &lt;&lt; "\n testing Display Package";
+	std::vector&lt;std::string&gt; htmlFiles;
+	display d;
+	htmlFiles.push_back("./display.cpp.html");
+	d.showWebPage(htmlFiles);
+	std::cout &lt;&lt; "Printing converted file names" &lt;&lt; "\n";
+
+	return 0;
+
+}</div>
+
+#endif
+</pre>
+</body
+></html
+>

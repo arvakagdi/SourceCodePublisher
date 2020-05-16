@@ -1,0 +1,59 @@
+<!Document html>
+<html>
+<head>
+<link rel = "stylesheet" href = "style.css">
+<script src="showHideClass.js"></script>
+</head>
+<body>
+<button onclick = "showHideClass('classes')">Show or Hide Class Contents</button>
+<button onclick = "showHideClass('functions')">Show or Hide Function Contents</button>
+<button onclick = "showHideClass('comments')">Show or Hide Comments</button><br>No dependency found for this file<pre>
+<div class="comments">//////////////////////////////////////////////////////////////////////////////////////////////</div>
+<div class="comments">// Display.h -  Includes all the functions required for Displaying the HTML files           //</div>
+<div class="comments">// ver 1.1                                                                                  //				</div>
+<div class="comments">// Platform:      Dell Intel Core i3, Win10                                                 //</div>
+<div class="comments">// Application:   Object Oriented Design - Project #1, Spring 2019                          //</div>
+<div class="comments">// Author:        Arva Kagdi                                                                //</div>
+<div class="comments">//////////////////////////////////////////////////////////////////////////////////////////////</div>
+
+<div class="comments">/*
+* Module Operations:
+* ==================
+* This package displays files from converted webpage folder which contains all HTML files.
+* It allows to create a pop up window from mozilla to display the converted source code.
+* We display 6 files one after another, after the previous page is killed
+* A class name display is read to serve this purpose
+*
+* Required files :
+* ==================
+* Process.h, Process.cpp
+*
+* Build commands
+* ===================
+* - devenv OODProject2.sln
+*
+* Maintenance History:
+* ====================
+* ver 1.1 : 3/20/2019
+* ver 1.0 : 2/14/2019
+* first release
+*/</div>
+
+
+
+#pragma once
+#include&lt;vector&gt;
+<div class="comments">//&lt;----creating class display----&gt;//</div>
+class display
+<div class="classes">{
+public:
+	display();
+	~display();
+	<div class="comments">//a function to display valid HTMl files using process class in the web browser</div>
+	void showWebPage(std::vector&lt;std::string&gt; convertedFiles);
+};</div>
+
+</pre>
+</body
+></html
+>
